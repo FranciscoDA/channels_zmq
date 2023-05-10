@@ -14,7 +14,7 @@ def generate_ipc_socket_name(test_name):
     return f"ipc://ipc/{test_name}.ipc"
 
 @pytest.fixture
-def zmq_single_publisher_layer(request):
+def zmq_embedded_layer(request):
     layer = EmbeddedZmqChannelLayer(generate_ipc_socket_name(request.node.originalname))
     yield layer
     asyncio.run(layer.flush())
