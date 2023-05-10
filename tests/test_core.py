@@ -93,3 +93,15 @@ async def test_new_channel(zmq_single_publisher_layer):
     # just for coverage purposes
     ch = await zmq_single_publisher_layer.new_channel()
     assert isinstance(ch, str) and "!" in ch
+
+
+@pytest.mark.asyncio
+async def test_flush(zmq_single_publisher_layer, slow_bind):
+    expected_message = {"type": "test.message", "text": "Ahoy-hoy!"}
+    recv_task = asyncio.create_task(zmq_single_publisher_layer.receive("ch1"))
+    await zmq_single_publisher_layer.send("ch1", expected_message)
+    assert len(zmq_single_publisher_layer.zmq_sub_sockets) == 1
+    await recv_task
+
+    await zmq_single_publisher_layer.flush()
+    assert zmq_single_publisher_layer.zmq_sub_sockets == {}
