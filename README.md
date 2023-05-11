@@ -1,4 +1,5 @@
 # channels_zmq
+[![Tests status](https://github.com/FranciscoDA/channels_zmq/actions/workflows/test.yml/badge.svg)](https://github.com/FranciscoDA/channels_zmq/actions/workflows/test.yml)
 
 A channel layer implementation using ZeroMQ PUB-SUB topology.
 
