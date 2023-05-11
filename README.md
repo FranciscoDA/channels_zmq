@@ -1,5 +1,6 @@
 # channels_zmq
 [![Tests status](https://github.com/FranciscoDA/channels_zmq/actions/workflows/tests.yml/badge.svg)](https://github.com/FranciscoDA/channels_zmq/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/channels-zmq)](https://pypi.org/project/channels-zmq/)
 
 A channel layer implementation using ZeroMQ PUB-SUB topology.
 
