@@ -43,8 +43,8 @@ class BaseZmqChannelLayer(BaseChannelLayer):
             async with self.zmq_sub_locks[channel]:
                 frame_message = await socket.recv()
             topic, expiration_timestamp, message = frame_message.split(self.DELIMITER, 2)
-            #if float(expiration_timestamp.decode()) < time.time():  # message has expired, skip to the next one
-            #    continue
+            if float(expiration_timestamp.decode()) < time.time():  # message has expired, skip to the next one
+                continue
             return self.deserialize(message)
 
     async def new_channel(self, prefix="specific"):
