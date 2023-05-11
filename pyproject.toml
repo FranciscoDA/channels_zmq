@@ -3,6 +3,13 @@
 requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "channels-zmq"
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION.txt"}
+
 [tool.setuptools_scm]
 # For smarter version schemes and other configuration options,
 # check out https://github.com/pypa/setuptools_scm
