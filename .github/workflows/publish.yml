@@ -1,0 +1,60 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Upload
+
+on:
+  workflow_run:
+    workflows: ["tests"]
+    branches: [ $default-branch , master ]
+    types:
+      - completed
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.filter.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - id: filter
+        run: |
+          echo 'File changes detected:'
+          git diff --name-only ${{ github.ref }}~1
+
+          if git diff --name-only ${{ github.ref }}~1 -- | grep -q '^VERSION.txt$' ; then
+            echo 'version=true' >> "$GITHUB_OUTPUT"
+          fi
+
+  upload:
+    needs: changes
+    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.changes.outputs.version == 'true' }}
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade twine build
+
+    - name: Build dist
+      run: |
+        python -m build
+
+    - name: Upload dist
+      run: |
+        TWINE_USERNAME=${{ secrets.TWINE_USERNAME }} TWINE_PASSWORD=${{ secrets.TWINE_PASSWORD }} python -m twine upload --repository ${{SECRETS.TWINE_REPOSITORY}} dist/*
